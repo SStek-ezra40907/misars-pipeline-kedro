@@ -4,12 +4,15 @@ import pandas as pd
 from src.misars_pipeline_kedro.pipelines.huggingface_integration.nodes import (
     get_repo_models_list,
     get_model_list,
-    filter_models
+    categorize_and_aggregate_models,
+    get_download_status,
+    download_huggingface_model
 )
 from huggingface_hub import HfApi, login
 from src.misars_pipeline_kedro.pipelines.huggingface_integration.nodes import credentials
 
 from unittest import mock
+
 
 @pytest.fixture
 def dummy_parameters():
@@ -18,7 +21,6 @@ def dummy_parameters():
         "min_downloads": 1000,
         "model_save_dir": "data/01_models_info/huggingface_models",
         "output_csv_path": "data/02_downloaded_models/downloaded_models.csv"
-
     }
     return parameters
 
@@ -74,9 +76,10 @@ def sample_models_data():
     }
     return pd.DataFrame(data)
 
+
 def test_filter_models(sample_models_data):
     # Act
-    filtered_models = filter_models(sample_models_data)
+    filtered_models = categorize_and_aggregate_models(sample_models_data)
 
     # Assert
     assert isinstance(filtered_models, pd.DataFrame)
@@ -88,3 +91,108 @@ def test_filter_models(sample_models_data):
     # Check if the has_pt and has_onnx columns are correct
     assert all(filtered_models['has_pt'] == True)  # All should have .pt files
     assert any(filtered_models['has_onnx'] == True)  # At least one should have .onnx files
+
+
+@pytest.fixture
+def repo_models_data():
+    return pd.DataFrame({
+        'model_name': [
+            'Urology_1-2-7val640rezize_4.36.0',
+            'Urology_yolov11x-seg_3-13-16-17val640rezize_1_4.40.0',
+            'urology_RegUNet_3000random320resize_DiceFocalLoss_4.34'
+        ],
+        'ext': ['.pt', '.pt', '.onnx']
+    })
+
+
+@pytest.fixture
+def downloaded_models_data():
+    return pd.DataFrame({
+        'model_name': [
+            'Urology_1-2-7val640rezize_4.36.0',
+            'urology_RegUNet_3000random320resize_DiceFocalLoss_4.34'
+        ],
+        'ext': ['.pt', '.onnx']
+    })
+
+
+# Test the get_download_status function
+def test_get_download_status(repo_models_data, downloaded_models_data):
+    # Call the function being tested
+    result = get_download_status(repo_models_data, downloaded_models_data)
+
+    # Check if the result is a DataFrame
+    assert isinstance(result, pd.DataFrame)
+
+    # Check if the 'downloaded' column is present
+    assert 'downloaded' in result.columns
+
+    # Check if downloaded models are correctly marked
+    expected_downloaded_status = [True, False, True]
+    assert list(result['downloaded']) == expected_downloaded_status
+
+    # Check if the number of rows in the result is correct
+    assert len(result) == 3
+
+
+@pytest.fixture
+def mock_data():
+    # Mock a DataFrame containing model names and extensions
+    data = {
+        "model_name": ["model_a", "model_b", "model_c"],
+        "ext": [".pt", ".onnx", ".pt"]
+    }
+    return pd.DataFrame(data)
+
+
+@pytest.fixture
+def mock_parameters():
+    # Mock parameters
+    return {
+        "download_models_path": "mock_target_dir",
+        "repo_name": "mock_repo"
+    }
+
+
+@pytest.fixture
+def mock_credentials():
+    return {
+        "huggingface_token": "mock_token"
+    }
+
+
+@patch("os.makedirs")
+@patch("src.misars_pipeline_kedro.pipelines.huggingface_integration.nodes.hf_hub_download")
+def test_download_huggingface_model_success(mock_hf_hub_download, mock_makedirs, mock_data, mock_parameters,
+                                            mock_credentials):
+    # Mock successful Hugging Face download
+    mock_hf_hub_download.return_value = None  # Simulate no exception raised
+    with patch('src.misars_pipeline_kedro.pipelines.huggingface_integration.nodes.credentials', mock_credentials):
+        result = download_huggingface_model(mock_data.copy(), mock_parameters)
+
+        # Ensure all models were processed
+        assert len(result) == len(mock_data)
+        mock_hf_hub_download.assert_called()
+        assert mock_hf_hub_download.call_count == len(mock_data)
+
+
+@patch("os.makedirs")
+@patch("src.misars_pipeline_kedro.pipelines.huggingface_integration.nodes.hf_hub_download")
+def test_download_huggingface_model_failure(mock_hf_hub_download, mock_makedirs, mock_data, mock_parameters,
+                                            mock_credentials):
+    # Mock Hugging Face download with an exception for one model
+    def mock_download_side_effect(*args, **kwargs):
+        if "model_b" in kwargs.get('filename', ''):
+            raise Exception("Download failed")
+
+    mock_hf_hub_download.side_effect = mock_download_side_effect
+
+    with patch('src.misars_pipeline_kedro.pipelines.huggingface_integration.nodes.credentials', mock_credentials):
+        result = download_huggingface_model(mock_data.copy(), mock_parameters)
+
+        # Ensure the failed model is removed
+        assert len(result) == len(mock_data) - 1  # model_b should be removed
+        assert "model_b" not in result['model_name'].values
+
+        # Ensure the download function was called correctly
+        assert mock_hf_hub_download.call_count == len(mock_data)

@@ -1,8 +1,0 @@
-model_name,has_pt,has_onnx
-Urology_yolov11x-seg_3-13-16-17val640rezize_1_4.40.0,True,False
-Urology_yolov9c-seg_3-13-16-17val640rezize-yoloTuring_4.38.1,True,False
-Urology_yolov9c-seg_3-13-16-17val640rezize_4.38.0,True,False
-urology_yolov8n_3000random640resize_20240811_4.34,True,False
-urology_yolov8x_3000random640resize_20240822_4.34,True,False
-urology_yolov9c_3000random640resize_20240811_4.34,True,False
-urology_yolov9e_3000random640resize_20240822_4.34,True,False

@@ -57,7 +57,7 @@ def get_repo_models_list(parameters: Dict) -> pd.DataFrame:
     return pd.DataFrame(models_data)
 
 
-def filter_models(models_data: pd.DataFrame) -> pd.DataFrame:
+def categorize_and_aggregate_models(models_data: pd.DataFrame) -> pd.DataFrame:
     models_data['has_pt'] = models_data['ext'].str.contains('pt')
     models_data['has_onnx'] = models_data['ext'].str.contains('onnx')
     models_data = models_data.drop(columns=['ext'])
@@ -85,8 +85,6 @@ def filter_yolo_models(models_data: pd.DataFrame) -> pd.DataFrame:
     yolo_models = (models_data[models_data['model_type'].str
     .contains('yolo', case=False)]
     ).drop(columns='model_type')
-
-    # 返回過濾後的 DataFrame
     return yolo_models
 
 
@@ -97,14 +95,16 @@ def filter_unet_models(models_data: pd.DataFrame) -> pd.DataFrame:
     return unet_models
 
 
-def download_huggingface_model(data: pd.DataFrame, parameters: Dict) -> None:
+def download_huggingface_model(data: pd.DataFrame, parameters: Dict) -> pd.DataFrame:
     import os
     target_dir = os.path.join(project_path, parameters["download_models_path"])
     repo_id = parameters['repo_name']
     hf_token = credentials["huggingface_token"]
     os.makedirs(target_dir, exist_ok=True)
 
-    for _, row in data.iterrows():
+    success_indices = []
+
+    for index, row in data.iterrows():
         model_name = row['model_name']
         file_ext = row['ext']
         target_file_path = os.path.join(target_dir, f"{model_name}{file_ext}")
@@ -113,10 +113,23 @@ def download_huggingface_model(data: pd.DataFrame, parameters: Dict) -> None:
             hf_hub_download(repo_id=repo_id, filename=f"{model_name}{file_ext}", token=hf_token, local_dir=target_dir,
                             cache_dir=None)
             print(f"Downloaded: {target_file_path}")
+            success_indices.append(index)  # 下載成功的模型記錄下來
         except Exception as e:
             print(f"Failed to download {model_name}: {str(e)}")
+
+    return data.loc[success_indices].reset_index(drop=True)
 
 
 def get_model_list(models_dir):
     model_files = [f for f in os.listdir(models_dir) if f.endswith('.pkl')]
     return model_files
+
+
+def get_download_status(repo_models: pd.DataFrame, downloaded_models: pd.DataFrame) -> pd.DataFrame:
+    repo_models['combined'] = repo_models['model_name'] + repo_models['ext']
+    downloaded_models['combined'] = downloaded_models['model_name'] + downloaded_models['ext']
+
+    repo_models['downloaded'] = repo_models['combined'].isin(downloaded_models['combined'])
+    repo_models = repo_models.drop(columns='combined')
+
+    return repo_models

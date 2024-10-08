@@ -2,6 +2,14 @@ repo_models_list:
   type: pandas.CSVDataset
   filepath: data/01_models_info/repo_models_list.csv
 
+#downloaded_models_list:
+#  type: pandas.CSVDataset
+#  filepath: data/01_models_info/downloaded_models_list.csv
+
+models_list:
+  type: pandas.CSVDataset
+  filepath: data/01_models_info/models_list.csv
+
 yolo_models_list:
   type: pandas.CSVDataset
   filepath: data/01_models_info/yolo_models_list.csv
@@ -15,6 +23,6 @@ models_dir:
   type: pandas.CSVDataset
   filepath: data/06_models
 
-filter_models_list:
-  type: pandas.CSVDataset
-  filepath: data/01_models_info/filter_models.csv
+#filter_models_list:
+#  type: pandas.CSVDataset
+#  filepath: data/01_models_info/filter_models.csv
