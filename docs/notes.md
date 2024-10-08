@@ -1,0 +1,3 @@
+- [ ] 希望能夠用固定數量的_來命名
+- [ ] {surgery_name}_{model_type}_{model_info}_v{version}
+- [ ] version format: {major}.{minor}.{patch} minor{xx}

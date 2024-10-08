@@ -18,7 +18,7 @@ data/**
 !.gitkeep
 
 # keep also the example dataset
-!data/01_raw/*
+!data/01_models_info/*
 
 
 ##########################

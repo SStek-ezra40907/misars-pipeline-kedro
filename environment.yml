@@ -1,5 +1,6 @@
-name: model-deployment-test
+name: misars_pipeline_kedro
 channels:
   - conda-forge
 dependencies:
   - kedro
+  - onnx

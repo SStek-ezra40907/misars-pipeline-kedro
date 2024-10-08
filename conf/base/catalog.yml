@@ -1,0 +1,20 @@
+repo_models_list:
+  type: pandas.CSVDataset
+  filepath: data/01_models_info/repo_models_list.csv
+
+yolo_models_list:
+  type: pandas.CSVDataset
+  filepath: data/01_models_info/yolo_models_list.csv
+
+unet_models_list:
+  type: pandas.CSVDataset
+  filepath: data/01_models_info/unet_models_list.csv
+
+
+models_dir:
+  type: pandas.CSVDataset
+  filepath: data/06_models
+
+filter_models_list:
+  type: pandas.CSVDataset
+  filepath: data/01_models_info/filter_models.csv

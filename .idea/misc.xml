@@ -3,5 +3,5 @@
   <component name="Black">
     <option name="sdkName" value="model-deployment-test" />
   </component>
-  <component name="ProjectRootManager" version="2" project-jdk-name="model-deployment-test" project-jdk-type="Python SDK" />
+  <component name="ProjectRootManager" version="2" project-jdk-name="misars_pipeline_kedro" project-jdk-type="Python SDK" />
 </project>

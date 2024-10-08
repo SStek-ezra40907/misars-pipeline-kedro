@@ -1,0 +1,13 @@
+# This is a boilerplate parameters config generated for pipeline 'huggingface_integration'
+# using Kedro 0.19.8.
+#
+# Documentation for this file format can be found in "Parameters"
+# Link: https://docs.kedro.org/en/0.19.8/configuration/parameters.html
+repo_options:
+  repo_name: "smartsurgery/urology-models"
+  repo_id: "https://huggingface.co/api/models/smartsurgery/urology-models"  # Hugging Face 儲存庫 ID
+  min_downloads: 1000  # 篩選下載次數低於 1000 的模型
+  model_save_dir: "data/01_models_info/huggingface_models"  # 模型保存路徑
+  output_csv_path: "data/02_downloaded_models/downloaded_models.csv"  # 輸出篩選後模型的 CSV 路徑
+  download_models_path: "data/02_downloaded_models"
+

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 
-# model_deployment_test documentation build
+# misars_pipeline_kedro documentation build
 # configuration file, created by sphinx-quickstart.
 #
 # This file is execfile()d with the current directory set to its
@@ -25,7 +25,7 @@ from model_deployment_test import __version__ as release
 
 # -- Project information -----------------------------------------------------
 
-project = "model_deployment_test"
+project = "misars_pipeline_kedro"
 author = "Kedro"
 
 # The short X.Y version.
@@ -149,8 +149,8 @@ latex_elements = {
 latex_documents = [
     (
         master_doc,
-        "model_deployment_test.tex",
-        "model_deployment_test Documentation",
+        "misars_pipeline_kedro.tex",
+        "misars_pipeline_kedro Documentation",
         "Kedro",
         "manual",
     )
@@ -163,8 +163,8 @@ latex_documents = [
 man_pages = [
     (
         master_doc,
-        "model_deployment_test",
-        "model_deployment_test Documentation",
+        "misars_pipeline_kedro",
+        "misars_pipeline_kedro Documentation",
         [author],
         1,
     )
@@ -178,11 +178,11 @@ man_pages = [
 texinfo_documents = [
     (
         master_doc,
-        "model_deployment_test",
-        "model_deployment_test Documentation",
+        "misars_pipeline_kedro",
+        "misars_pipeline_kedro Documentation",
         author,
-        "model_deployment_test",
-        "Project model_deployment_test codebase.",
+        "misars_pipeline_kedro",
+        "Project misars_pipeline_kedro codebase.",
         "Data-Science",
     )
 ]

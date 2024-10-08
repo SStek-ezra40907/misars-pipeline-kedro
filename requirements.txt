@@ -8,3 +8,17 @@ kedro[jupyter]
 notebook
 scikit-learn~=1.5.1; python_version >= "3.9"
 scikit-learn<=1.4.0,>=1.0; python_version < "3.9"
+apscheduler~=3.10.4
+onnx~=1.17.0
+onnxruntime
+onnx_graphsurgeon
+huggingface_hub
+datasets
+pandas~=2.2.3
+pytest~=7.4.4
+requests~=2.32.3
+beautifulsoup4~=4.12.3
+huggingface-hub~=0.25.1
+numpy~=2.1.1
+fsspec~=2024.6.1
+pillow~=10.4.0

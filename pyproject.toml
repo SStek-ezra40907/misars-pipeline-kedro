@@ -3,12 +3,12 @@ requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "model_deployment_test"
+name = "misars_pipeline_kedro"
 readme = "README.md"
 dynamic = ["dependencies", "version"]
 
 [project.scripts]
-model-deployment-test = "model_deployment_test.__main__:main"
+model-deployment-test = "misars_pipeline_kedro.__main__:main"
 
 [project.entry-points."kedro.hooks"]
 
@@ -33,15 +33,15 @@ dev = [
 
 [tool.setuptools.dynamic]
 dependencies = {file = "requirements.txt"}
-version = {attr = "model_deployment_test.__version__"}
+version = {attr = "misars_pipeline_kedro.__version__"}
 
 [tool.setuptools.packages.find]
 where = ["src"]
 namespaces = false
 
 [tool.kedro]
-package_name = "model_deployment_test"
-project_name = "model-deployment-test"
+package_name = "misars_pipeline_kedro"
+project_name = "misars_pipeline_kedro"
 kedro_init_version = "0.19.8"
 tools = ['Linting', 'Testing', 'Custom Logging', 'Documentation', 'Data Structure', 'Kedro Viz']
 example_pipeline = "False"
@@ -50,7 +50,7 @@ source_dir = "src"
 [tool.pytest.ini_options]
 addopts = """
 --cov-report term-missing \
---cov src/model_deployment_test -ra"""
+--cov src/misars_pipeline_kedro -ra"""
 
 [tool.coverage.report]
 fail_under = 0

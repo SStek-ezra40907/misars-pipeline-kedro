@@ -1,0 +1,31 @@
+@startuml
+start
+
+:檢查模型類型;
+
+if (是否為 UNet？) then (是)
+    :檢查 ONNX 格式;
+    if (輸入格式是否為 (nhwc)?) then (是)
+        :處理 UNet 模型;
+    else (否)
+        :輸入格式不正確;
+    endif
+else (否)
+    if (是否為 YOLO？) then (是)
+        :檢查 ONNX 版本;
+        if (檔案結尾是否為 nms?) then (是)
+            if (輸入格式是否為 (nhwc)?) then (是)
+                :處理 YOLO 模型;
+            else (否)
+                :輸入格式不正確;
+            endif
+        else (否)
+            :檔案結尾不正確;
+        endif
+    else (否)
+        :處理其他模型;
+    endif
+endif
+
+stop
+@enduml
