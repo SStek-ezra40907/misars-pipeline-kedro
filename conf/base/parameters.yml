@@ -1,3 +1,5 @@
 model_storage:
   path: "data/06_models/"
   huggingface_repo_url: "https://huggingface.co/your-model-repo"
+
+onnx_directory: "02_downloaded_models"

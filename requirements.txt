@@ -23,3 +23,5 @@ numpy~=2.1.1
 fsspec~=2024.6.1
 pillow~=10.4.0
 pytest-cov
+torch
+torchvision

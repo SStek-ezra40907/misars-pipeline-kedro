@@ -5,8 +5,6 @@ from pathlib import Path
 from typing import Dict
 from kedro.config import OmegaConfigLoader
 from kedro.framework.project import settings
-from typing import List
-from bs4 import BeautifulSoup
 from huggingface_hub import hf_hub_download
 
 # 設定專案路徑與配置路徑
@@ -133,3 +131,4 @@ def get_download_status(repo_models: pd.DataFrame, downloaded_models: pd.DataFra
     repo_models = repo_models.drop(columns='combined')
 
     return repo_models
+

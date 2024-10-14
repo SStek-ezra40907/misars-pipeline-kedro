@@ -18,6 +18,10 @@ unet_models_list:
   type: pandas.CSVDataset
   filepath: data/01_models_info/unet_models_list.csv
 
+modified_unet_models_list:
+  type: pandas.CSVDataset
+  filepath: data/01_models_info/unet_models_list.csv
+
 
 models_dir:
   type: pandas.CSVDataset
@@ -26,3 +30,15 @@ models_dir:
 #filter_models_list:
 #  type: pandas.CSVDataset
 #  filepath: data/01_models_info/filter_models.csv
+
+onnx_models:
+  type: partitions.PartitionedDataset
+  dataset: misars_pipeline_kedro.datasets.onnx_dataset.ONNXDataset
+  path: data/02_downloaded_models
+  filename_suffix: .onnx
+
+pt_models:
+  type: partitions.PartitionedDataset
+  dataset: misars_pipeline_kedro.datasets.pt_dataset.PTDataset
+  path: data/02_downloaded_models
+  filename_suffix: .pt
