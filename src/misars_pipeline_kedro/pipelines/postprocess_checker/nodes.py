@@ -1,7 +1,5 @@
 import pandas as pd
 
-import onnx_graphsurgeon as gs
-
 
 def filter_onnx_model(model_list: pd.DataFrame) -> pd.DataFrame:
     model_list = model_list.loc[model_list['ext'] == '.onnx']
@@ -34,43 +32,6 @@ def filter_nchw_model(onnx_model_list: pd.DataFrame):
 def filter_nhwc_model(onnx_model_list: pd.DataFrame):
     nhwc_model_list = onnx_model_list.loc[onnx_model_list['input_layout'] == 'NHWC']
     return nhwc_model_list
-
-
-def convert_onnx_to_nhwc(onnx_models: pd.DataFrame, onnx_model_list: pd.DataFrame):
-    converted_models = {}
-    for model_info in onnx_model_list:
-        model_id, model_load_func = onnx_models[model_info].items()
-        model = model_load_func()
-
-        graph = gs.import_onnx(model)
-
-        # Update graph input name
-        graph.inputs[0].name += "_old"
-
-        # Insert a transpose node
-        nhwc_to_nchw_in = gs.Node("Transpose", name="transpose_input", attrs={"perm": [0, 3, 1, 2]})
-        nhwc_to_nchw_in.outputs = graph.inputs
-
-        h = model_info["input_shape_h"]
-        w = model_info["input_shape_w"]
-        c = model_info["input_shape_c"]
-
-        # Create new input with NHWC shape
-        new_input = gs.Variable("INPUT__0", dtype=graph.inputs[0].dtype, shape=[1, h, w, c])
-        graph.inputs = [new_input]
-        nhwc_to_nchw_in.inputs = graph.inputs
-
-        # Add the transpose node to the graph
-        graph.nodes.extend([nhwc_to_nchw_in])
-
-        # Clean up and sort the graph
-        graph.cleanup().toposort()
-
-        # Export the modified graph
-        converted_model = gs.export_onnx(graph)
-        converted_models[model_id] = converted_model
-
-    return converted_models
 
 
 def get_model_io_shapes(model):
@@ -135,3 +96,12 @@ def get_hw_c_from_shape(input_shape, input_layout) -> tuple[int, int, int]:
         raise ValueError("Unsupported input layout. Use 'NCHW' or 'NHWC'.")
 
     return int(H), int(W), int(C)
+
+def get_unconverted_onnx_models(onnx_models: dict, onnx_model_list: pd.DataFrame):
+    onnx_model_names = set(model_name.replace('_nhwc', '') for model_name in onnx_models.keys())
+    converted_model_names = set(model_name.replace('_nhwc', '') for model_name in onnx_model_list['model_name'])
+    print(f"converted_model_names: {converted_model_names}")
+    unconverted_model_keys = onnx_model_names - converted_model_names
+    print(f"unconverted_models: {unconverted_model_keys}")
+    unconverted_models = {k: v for k, v in onnx_models.items() if k in unconverted_model_keys}
+    return unconverted_models

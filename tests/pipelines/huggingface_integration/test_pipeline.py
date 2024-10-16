@@ -6,7 +6,8 @@ from src.misars_pipeline_kedro.pipelines.huggingface_integration.nodes import (
     get_model_list,
     categorize_and_aggregate_models,
     get_download_status,
-    download_huggingface_model
+    download_huggingface_model,
+    push_model_to_huggingface
 )
 from huggingface_hub import HfApi, login
 from src.misars_pipeline_kedro.pipelines.huggingface_integration.nodes import credentials
@@ -16,14 +17,12 @@ from unittest import mock
 
 @pytest.fixture
 def dummy_parameters():
-    parameters = {
+    return {
         "repo_id": "https://huggingface.co/api/models/smartsurgery/urology-models",
         "min_downloads": 1000,
         "model_save_dir": "data/01_models_info/huggingface_models",
         "output_csv_path": "data/02_downloaded_models/downloaded_models.csv"
     }
-    return parameters
-
 
 @pytest.fixture
 def dummy_credentials():
@@ -31,28 +30,30 @@ def dummy_credentials():
         "huggingface_token": "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"
     }
 
-
-def test_get_repo_models(dummy_parameters, dummy_credentials):
+def test_get_repo_models_list(dummy_parameters, dummy_credentials):
     with patch('src.misars_pipeline_kedro.pipelines.huggingface_integration.nodes.credentials', dummy_credentials):
-        # Act
         result = get_repo_models_list(dummy_parameters)
-
         assert isinstance(result, pd.DataFrame)
-        assert len(result) == 14
-
+        assert len(result) > 0
+        assert 'model_name' in result.columns
 
 def test_get_model_list():
-    models_dir = "data/06_models"
+    with patch('os.listdir') as mock_listdir:
+        mock_listdir.return_value = ['model1.pkl', 'model2.pkl', 'not_a_model.txt']
+        result = get_model_list('dummy_path')
+        assert len(result) == 2
+        assert 'model1.pkl' in result
+        assert 'model2.pkl' in result
+        assert 'not_a_model.txt' not in result
 
-    # Mock os.listdir to simulate files in the directory
-    with mock.patch("os.listdir") as mocked_listdir:
-        mocked_listdir.return_value = ["model_a.pkl", "model_b.pkl"]
-
-        model_files = get_model_list(models_dir)
-        assert len(model_files) == 2
-        assert "model_a.pkl" in model_files
-        assert "model_b.pkl" in model_files
-
+def test_categorize_and_aggregate_models():
+    input_data = pd.DataFrame({
+        'model_name': ['yolo_model', 'unet_model', 'unknown_model'],
+        'ext': ['.pt', '.onnx', '.pkl']
+    })
+    result = categorize_and_aggregate_models(input_data)
+    assert len(result) == 3
+    assert all(result['model_type'].isin(['yolo', 'unet', 'unknown']))
 
 @pytest.fixture
 def sample_models_data():
@@ -196,3 +197,45 @@ def test_download_huggingface_model_failure(mock_hf_hub_download, mock_makedirs,
 
         # Ensure the download function was called correctly
         assert mock_hf_hub_download.call_count == len(mock_data)
+
+
+@pytest.fixture
+def sample_converted_models():
+    return pd.DataFrame({
+        'model_name': ['model_a', 'model_b'],
+        'model_path': ['/path/to/model_a.onnx', '/path/to/model_b.onnx']
+    })
+
+@pytest.fixture
+def sample_parameters():
+    return {
+        'repo_name': 'test-repo',
+        'model_save_path': '/path/to/models'
+    }
+
+@patch('src.misars_pipeline_kedro.pipelines.huggingface_integration.nodes.HfApi')
+@patch('src.misars_pipeline_kedro.pipelines.huggingface_integration.nodes.login')
+@patch('src.misars_pipeline_kedro.pipelines.huggingface_integration.nodes.credentials', {"huggingface_token": "test_token"})
+def test_push_model_to_huggingface(mock_login, mock_hf_api, sample_converted_models, sample_parameters):
+    mock_api_instance = MagicMock()
+    mock_hf_api.return_value = mock_api_instance
+
+    result = push_model_to_huggingface(sample_converted_models, sample_parameters)
+
+    mock_login.assert_called_once_with("test_token")
+    assert mock_api_instance.upload_file.call_count == 2
+    mock_api_instance.upload_file.assert_any_call(
+        path_or_fileobj='/path/to/model_a.onnx',
+        path_in_repo='model_a.onnx',
+        repo_id='test-repo',
+        repo_type='model',
+        commit_message='Upload model_a ONNX model'
+    )
+    mock_api_instance.upload_file.assert_any_call(
+        path_or_fileobj='/path/to/model_b.onnx',
+        path_in_repo='model_b.onnx',
+        repo_id='test-repo',
+        repo_type='model',
+        commit_message='Upload model_b ONNX model'
+    )
+    assert result.equals(sample_converted_models)

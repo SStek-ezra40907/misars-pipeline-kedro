@@ -42,3 +42,26 @@ pt_models:
   dataset: misars_pipeline_kedro.datasets.pt_dataset.PTDataset
   path: data/02_downloaded_models
   filename_suffix: .pt
+
+converted_models:
+  type: partitions.PartitionedDataset
+  dataset: misars_pipeline_kedro.datasets.onnx_dataset.ONNXDataset
+  path: data/03_preprocess_models
+  filename_suffix: .onnx
+  load_args:
+    allow_missing: True
+
+preprocessed_models:
+  type: partitions.PartitionedDataset
+  path: data/03_preprocess_models
+  dataset: pickle.PickleDataset
+  filename_suffix: ".pkl"
+  load_args:
+    allow_missing: True
+
+pending_models:
+  type: partitions.PartitionedDataset
+  dataset: misars_pipeline_kedro.datasets.onnx_dataset.ONNXDataset
+  path: data/03_preprocess_models
+  filename_suffix: .onnx
+

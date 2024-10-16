@@ -3,9 +3,16 @@ import pandas as pd
 import os
 from pathlib import Path
 from typing import Dict
+import logging
 from kedro.config import OmegaConfigLoader
 from kedro.framework.project import settings
-from huggingface_hub import hf_hub_download
+from huggingface_hub import (
+    hf_hub_download,
+    HfApi,
+    login
+)
+
+logger = logging.getLogger(__name__)
 
 # 設定專案路徑與配置路徑
 project_path = "C:/Users/Ezra4/PycharmProjects/misars_pipeline_kedro"
@@ -132,3 +139,22 @@ def get_download_status(repo_models: pd.DataFrame, downloaded_models: pd.DataFra
 
     return repo_models
 
+
+def push_model_to_huggingface(converted_models: pd.DataFrame, parameters: Dict):
+    repo_id = parameters['repo_name']
+    hf_token = credentials["huggingface_token"]
+
+    login(hf_token)
+    api = HfApi()
+    model_save_path = parameters['model_save_path']
+    print(f"filepath")
+    for model_id, _ in converted_models.items():
+        model_name = model_id
+        model_path = os.path.join(model_save_path, f"{model_name}.onnx")
+        api.upload_file(
+            path_or_fileobj=model_path,
+            path_in_repo=f"{model_name}.onnx",
+            repo_id=repo_id,
+            repo_type="model"
+        )
+        logger.info(f"Model {model_name} successfully pushed to {repo_id}")

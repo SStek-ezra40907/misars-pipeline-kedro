@@ -10,4 +10,5 @@ repo_options:
   model_save_dir: "data/01_models_info/huggingface_models"  # 模型保存路徑
   output_csv_path: "data/02_downloaded_models/downloaded_models.csv"  # 輸出篩選後模型的 CSV 路徑
   download_models_path: "data/02_downloaded_models"
+  model_save_path: data/03_preprocess_models
 
