@@ -24,11 +24,13 @@ def dummy_parameters():
         "output_csv_path": "data/02_downloaded_models/downloaded_models.csv"
     }
 
+
 @pytest.fixture
 def dummy_credentials():
     return {
         "huggingface_token": "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"
     }
+
 
 def test_get_repo_models_list(dummy_parameters, dummy_credentials):
     with patch('src.misars_pipeline_kedro.pipelines.huggingface_integration.nodes.credentials', dummy_credentials):
@@ -36,6 +38,7 @@ def test_get_repo_models_list(dummy_parameters, dummy_credentials):
         assert isinstance(result, pd.DataFrame)
         assert len(result) > 0
         assert 'model_name' in result.columns
+
 
 def test_get_model_list():
     with patch('os.listdir') as mock_listdir:
@@ -46,6 +49,7 @@ def test_get_model_list():
         assert 'model2.pkl' in result
         assert 'not_a_model.txt' not in result
 
+
 def test_categorize_and_aggregate_models():
     input_data = pd.DataFrame({
         'model_name': ['yolo_model', 'unet_model', 'unknown_model'],
@@ -54,6 +58,7 @@ def test_categorize_and_aggregate_models():
     result = categorize_and_aggregate_models(input_data)
     assert len(result) == 3
     assert all(result['model_type'].isin(['yolo', 'unet', 'unknown']))
+
 
 @pytest.fixture
 def sample_models_data():
@@ -206,6 +211,7 @@ def sample_converted_models():
         'model_path': ['/path/to/model_a.onnx', '/path/to/model_b.onnx']
     })
 
+
 @pytest.fixture
 def sample_parameters():
     return {
@@ -213,9 +219,11 @@ def sample_parameters():
         'model_save_path': '/path/to/models'
     }
 
+
 @patch('src.misars_pipeline_kedro.pipelines.huggingface_integration.nodes.HfApi')
 @patch('src.misars_pipeline_kedro.pipelines.huggingface_integration.nodes.login')
-@patch('src.misars_pipeline_kedro.pipelines.huggingface_integration.nodes.credentials', {"huggingface_token": "test_token"})
+@patch('src.misars_pipeline_kedro.pipelines.huggingface_integration.nodes.credentials',
+       {"huggingface_token": "test_token"})
 def test_push_model_to_huggingface(mock_login, mock_hf_api, sample_converted_models, sample_parameters):
     mock_api_instance = MagicMock()
     mock_hf_api.return_value = mock_api_instance

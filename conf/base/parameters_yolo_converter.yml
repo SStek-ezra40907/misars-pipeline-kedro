@@ -1,5 +1,10 @@
-# This is a boilerplate parameters config generated for pipeline 'onnx_converter'
+# This is a boilerplate parameters config generated for pipeline 'yolo_converter'
 # using Kedro 0.19.8.
 #
 # Documentation for this file format can be found in "Parameters"
 # Link: https://docs.kedro.org/en/0.19.8/configuration/parameters.html
+
+export_options:
+  device: "cuda:0"
+  opset_version: 11
+  sim: true

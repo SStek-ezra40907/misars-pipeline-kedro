@@ -1,5 +1,5 @@
 """
-This is a boilerplate pipeline 'graph_transposer'
+This is a boilerplate pipeline 'yolo_converter'
 generated using Kedro 0.19.8
 """
 

@@ -1,4 +1,5 @@
 import pandas as pd
+import re
 
 
 def filter_onnx_model(model_list: pd.DataFrame) -> pd.DataFrame:
@@ -22,6 +23,17 @@ def get_onnx_input_shape(onnx_models: pd.DataFrame, onnx_model_list: pd.DataFram
     onnx_model_list["input_shape_c"] = onnx_model_list["input_shape_c"].astype(int)
     print(f"onnx_model_list: {onnx_model_list}")
     return onnx_model_list
+
+
+def get_pt_input_shape_by_name(pt_models: pd.DataFrame, pt_model_list: pd.DataFrame):
+    pattern = r"(\d{3})re[sz]{1}ize"
+    pt_model_list['matches'] = pt_model_list['model_name'].str.extract(pattern).astype(int)
+    pt_model_list['input_shape_h'] = pt_model_list['matches']
+    pt_model_list['input_shape_w'] = pt_model_list['matches']
+    pt_model_list['input_shape_c'] = 3
+    pt_model_list['input_layout'] = 'NCHW'
+    pt_model_list.drop(columns=['matches'], inplace=True)
+    return pt_model_list
 
 
 def filter_nchw_model(onnx_model_list: pd.DataFrame):
@@ -97,11 +109,41 @@ def get_hw_c_from_shape(input_shape, input_layout) -> tuple[int, int, int]:
 
     return int(H), int(W), int(C)
 
-def get_unconverted_onnx_models(onnx_models: dict, onnx_model_list: pd.DataFrame):
-    onnx_model_names = set(model_name.replace('_nhwc', '') for model_name in onnx_models.keys())
-    converted_model_names = set(model_name.replace('_nhwc', '') for model_name in onnx_model_list['model_name'])
-    print(f"converted_model_names: {converted_model_names}")
-    unconverted_model_keys = onnx_model_names - converted_model_names
-    print(f"unconverted_models: {unconverted_model_keys}")
-    unconverted_models = {k: v for k, v in onnx_models.items() if k in unconverted_model_keys}
+
+def get_unconverted_onnx_models(onnx_models: dict, merged_model_list: pd.DataFrame):
+    onnx_model_names = set(onnx_models.keys())
+    converted_model_names = set(merged_model_list['model_name'])
+
+    unconverted_models = {}
+    for model_name in onnx_model_names:
+        if model_name.endswith('_nhwc'):
+            continue  # 跳過已經帶有 _nhwc 後綴的模型
+        if f"{model_name}_nhwc" in converted_model_names:
+            continue  # 如果存在對應的 _nhwc 版本，則視為已轉換
+        unconverted_models[model_name] = onnx_models[model_name]
+
+    print(f"unconverted_models: {unconverted_models}")
     return unconverted_models
+
+# def get_unconverted_pt_models(pt_models: dict, pt_model_list: pd.DataFrame):
+#     pt_model_names = set(model_name.replace('_nhwc', '') for model_name in pt_models.keys())
+#     converted_model_names = set(model_name.replace('_nhwc', '') for model_name in pt_model_list['model_name'])
+#     print(f"converted_model_names: {converted_model_names}")
+#     unconverted_model_keys = pt_model_names - converted_model_names
+#     print(f"unconverted_models: {unconverted_model_keys}")
+#     unconverted_models = {k: v for k, v in pt_models.items() if k in unconverted_model_keys}
+#     return unconverted_models
+
+def merge_dataframes(df1: pd.DataFrame, df2: pd.DataFrame) -> pd.DataFrame:
+    """
+    Merges two DataFrames with the same format.
+
+    Args:
+        df1 (pd.DataFrame): The first DataFrame
+        df2 (pd.DataFrame): The second DataFrame
+
+    Returns:
+        pd.DataFrame: The merged DataFrame
+    """
+    merged_df = pd.concat([df1, df2], ignore_index=True)
+    return merged_df

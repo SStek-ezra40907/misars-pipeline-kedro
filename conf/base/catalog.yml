@@ -22,6 +22,15 @@ modified_unet_models_list:
   type: pandas.CSVDataset
   filepath: data/01_models_info/unet_models_list.csv
 
+modified_yolo_models_list:
+  type: pandas.CSVDataset
+  filepath: data/01_models_info/yolo_models_list.csv
+
+
+merged_models_list:
+  type: pandas.CSVDataset
+  filepath: data/01_models_info/merged_models_list.csv
+
 
 models_dir:
   type: pandas.CSVDataset
@@ -37,9 +46,9 @@ onnx_models:
   path: data/02_downloaded_models
   filename_suffix: .onnx
 
-pt_models:
+yolo_models:
   type: partitions.PartitionedDataset
-  dataset: misars_pipeline_kedro.datasets.pt_dataset.PTDataset
+  dataset: misars_pipeline_kedro.datasets.yolo_dataset.YOLODataset
   path: data/02_downloaded_models
   filename_suffix: .pt
 
