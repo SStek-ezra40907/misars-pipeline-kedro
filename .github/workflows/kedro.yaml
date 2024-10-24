@@ -9,9 +9,9 @@ jobs:
   kedro:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@master
-    - name: Kedro
-      uses: ElCuboNegro/kedro-deployment@1.0.0
-      with:
-        GITHUB_PAT: ${{ secrets.KEDRO_GITHUBACTIONS }}
-      should_run: True
+      - uses: actions/checkout@master
+      - name: Kedro
+        uses: ElCuboNegro/kedro-deployment@1.0.0
+        with:
+          GITHUB_PAT: ${{ secrets.KEDRO_GITHUBACTIONS }}
+        should_run: True
