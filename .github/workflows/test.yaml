@@ -1,0 +1,17 @@
+name: Test PAT
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  test-pat:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - name: Test PAT
+        run: echo "Testing PAT"
+        env:
+          GITHUB_PAT: ${{ secrets.KEDRO_GITHUBACTIONS }}
