@@ -19,4 +19,4 @@ jobs:
           pip install -r requirements.txt
       - name: Run tests
         run: |
-          pytest tests/
+          pytest --cov-report term-missing --cov=src/misars_pipeline_kedro tests/
