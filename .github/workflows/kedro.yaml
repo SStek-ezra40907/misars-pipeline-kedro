@@ -13,6 +13,6 @@ jobs:
       - name: Kedro
         uses: ElCuboNegro/kedro-deployment@1.0.0
         with:
+          GITHUB_PAT: ${{ secrets.KEDRO_GITHUBACTIONS }}
           python_version: '3.10'
-        GITHUB_PAT: ${{ secrets.KEDRO_GITHUBACTIONS }}
-        should_run: True
+          should_run: True
