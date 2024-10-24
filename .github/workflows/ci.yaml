@@ -2,9 +2,7 @@ name: Kedro CI
 
 on:
   push:
-    branches: [ * ]
-  pull_request:
-    branches: [ main ]
+    branches: '*'
 
 jobs:
   test:
