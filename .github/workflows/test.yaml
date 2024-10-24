@@ -3,7 +3,7 @@ name: Test PAT
 on:
   push:
     branches:
-      - main
+      - '*'
 
 jobs:
   test-pat:
