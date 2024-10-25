@@ -16,7 +16,7 @@ model-deployment-test = "misars_pipeline_kedro.__main__:main"
 docs = [
     "docutils<0.21",
     "sphinx>=5.3,<7.3",
-     "sphinx_rtd_theme==2.0.0",
+    "sphinx_rtd_theme==2.0.0",
     "nbsphinx==0.8.1",
     "sphinx-autodoc-typehints==1.20.2",
     "sphinx_copybutton==0.5.2",
@@ -29,6 +29,40 @@ dev = [
     "pytest-mock>=1.7.1, <2.0",
     "pytest~=7.2",
     "ruff~=0.1.8"
+]
+cuda = [
+    "nvidia-cuda-runtime-cu12",
+    "tensorrt==10.5.0",
+    "tensorrt-cu12==10.5.0",
+    "tensorrt-cu12_bindings==10.5.0",
+    "tensorrt-cu12_libs==10.5.0",
+    # 如果需要CUDA版本
+    # "torch==2.5.0+cu121"
+]
+cpu = [
+    "torch==2.5.0"
+]
+default = [
+    "api==0.0.7",
+    "APScheduler==3.10.4",
+    "huggingface_hub==0.25.1",
+    "kedro==0.19.8",
+    "kedro_viz==10.0.0",
+    "kedro[jupyter]",
+    "kedro-datasets>=3.0; python_version >= '3.9'",
+    "kedro-datasets>=1.0; python_version < '3.9'",
+    "notebook",
+    "scikit-learn~=1.5.1; python_version >= '3.9'",
+    "scikit-learn<=1.4.0,>=1.0; python_version < '3.9'",
+    "onnx==1.15.0",
+    "onnx_graphsurgeon==0.5.2",
+    "onnxsim==0.4.36",
+    "pytest==7.4.4",
+    "pytest-cov",
+    "Requests==2.32.3",
+    "ultralytics==8.3.17",
+    "ipython>=8.10",
+    "jupyterlab>=3.0"
 ]
 
 [tool.setuptools.dynamic]

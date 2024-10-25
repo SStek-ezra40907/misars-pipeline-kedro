@@ -1,6 +1,5 @@
 api==0.0.7
 APScheduler==3.10.4
-nvidia-cuda-runtime-cu12
 huggingface_hub==0.25.1
 kedro==0.19.8
 kedro_viz==10.0.0
@@ -16,12 +15,18 @@ onnxsim==0.4.36
 pytest==7.4.4
 pytest-cov
 Requests==2.32.3
-tensorrt==10.5.0
-tensorrt-cu12==10.5.0
-tensorrt-cu12_bindings==10.5.0
-tensorrt-cu12_libs==10.5.0
-# torch==2.5.0+cu121
-torch==2.5.0
-ultralytics==8.3.17
 ipython>=8.10
 jupyterlab>=3.0
+
+# 安裝時判斷是否有 CUDA，安裝相應版本
+nvidia-cuda-runtime-cu12; platform_system == "Linux" and extra == "cuda"
+tensorrt==10.5.0; platform_system == "Linux" and extra == "cuda"
+tensorrt-cu12==10.5.0; platform_system == "Linux" and extra == "cuda"
+tensorrt-cu12_bindings==10.5.0; platform_system == "Linux" and extra == "cuda"
+tensorrt-cu12_libs==10.5.0; platform_system == "Linux" and extra == "cuda"
+
+# 如果有 CUDA，使用支持 CUDA 的 torch 版本
+# torch==2.5.0+cu121; platform_system == "Linux" and extra == "cuda"
+torch==2.5.0; platform_system == "Linux" and extra == "cpu"
+
+ultralytics==8.3.17
