@@ -15,7 +15,8 @@ from huggingface_hub import (
 logger = logging.getLogger(__name__)
 
 # 設定專案路徑與配置路徑
-project_path = "C:/Users/Ezra4/PycharmProjects/misars_pipeline_kedro"
+# project_path = "C:/Users/Ezra4/PycharmProjects/misars_pipeline_kedro"
+project_path = Path.cwd()
 conf_path = str(Path(project_path) / settings.CONF_SOURCE)
 conf_loader = OmegaConfigLoader(conf_source=conf_path)
 credentials = conf_loader["credentials"]
