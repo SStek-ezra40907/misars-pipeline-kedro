@@ -32,12 +32,10 @@ dev = [
 ]
 cuda = [
     "nvidia-cuda-runtime-cu12",
-    "tensorrt==10.5.0",
     "tensorrt-cu12==10.5.0",
     "tensorrt-cu12_bindings==10.5.0",
     "tensorrt-cu12_libs==10.5.0",
-    # 如果需要CUDA版本
-    # "torch==2.5.0+cu121"
+    "torch==2.5.0"
 ]
 cpu = [
     "torch==2.5.0"
@@ -62,7 +60,8 @@ default = [
     "Requests==2.32.3",
     "ultralytics==8.3.17",
     "ipython>=8.10",
-    "jupyterlab>=3.0"
+    "jupyterlab>=3.0",
+    "tensorrt==10.5.0"
 ]
 
 [tool.setuptools.dynamic]
