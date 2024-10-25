@@ -27,13 +27,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          
-          # Check if CUDA is available and install the appropriate dependencies
-          if python -c "import torch; print(torch.cuda.is_available())" | grep -q 'True'; then
-            pip install .[cuda]
-          else
-            pip install .[cpu]
-          fi
+          pip install .[cpu]
 
       - name: Install additional testing dependencies
         run: |
