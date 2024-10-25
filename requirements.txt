@@ -1,17 +1,27 @@
 api==0.0.7
 APScheduler==3.10.4
+nvidia-cuda-runtime-cu12
 huggingface_hub==0.25.1
-kedro==0.19.9
+kedro==0.19.8
 kedro_viz==10.0.0
+kedro[jupyter]
+kedro-datasets>=3.0; python_version >= "3.9"
+kedro-datasets>=1.0; python_version < "3.9"
+notebook
+scikit-learn~=1.5.1; python_version >= "3.9"
+scikit-learn<=1.4.0,>=1.0; python_version < "3.9"
 onnx==1.15.0
 onnx_graphsurgeon==0.5.2
 onnxsim==0.4.36
-pandas==2.2.3
 pytest==7.4.4
 pytest-cov
 Requests==2.32.3
 tensorrt==10.5.0
-tensorrt_cu12==10.5.0
+tensorrt-cu12==10.5.0
+tensorrt-cu12_bindings==10.5.0
+tensorrt-cu12_libs==10.5.0
 # torch==2.5.0+cu121
 torch==2.5.0
 ultralytics==8.3.17
+ipython>=8.10
+jupyterlab>=3.0
