@@ -5,6 +5,6 @@
 # Link: https://docs.kedro.org/en/0.19.8/configuration/parameters.html
 
 export_options:
-  device: "cuda:0"
+  device: "cpu"
   opset_version: 11
   sim: true
